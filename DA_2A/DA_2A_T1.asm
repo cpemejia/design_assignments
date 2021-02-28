@@ -5,31 +5,39 @@
 ; Author : ElmerOMejia
 ;
 
+;
+; DA_2A.asm
+;
+; Created: 2/22/2021 10:04:43 PM
+; Author : ElmerOMejia
+;
 
 .INCLUDE "M328pbDEF.INC"
 
+.cseg
+.ORG 0x00
+
+LDI R16, LOW(RAMEND) 
+OUT SPL, R16
+LDI R16, HIGH(RAMEND) 
+OUT SPH, R16
+
+
 SBI DDRB, 3 ; set PB 3 output
-LDI R19, 15 ; load immediate value 15 into R19
-LDI R20, 5  ; load immediate value 5 into R20
 
-loop: 
+loop:
 SBI PORTB, 3 ; turn on portB
-
-fifteen:     ; loop for 0.75 s delay
+LDI R20, 15  ; delay 15x
 CALL delay   ; call delay subroutine
-dec R19      ; dec counter
-BRNE fifteen ; if not zero, loop to fifteen label
 CBI PORTB, 3 ; turn off portB
-
-five:        ; loop for 0.25s delay
+LDI R20, 5   ; delay 5x
 CALL delay   ; call delay subroutine
-dec R20      ; dec counter
-BRNE five    ; if not zero, loop to fiteen label
 
 rjmp loop    ; endless loop
 
 
 delay:       ; delay for a 0.05s delay
+
 LDI R16, 3   ; load immediate 3 to R16
 L1:          ; label 1
 LDI R17, 105 ; load immediate 105 into R17
@@ -49,5 +57,8 @@ DEC R17
 BRNE L2
 DEC R16
 BRNE L1
+DEC R20
+BRNE delay
 ret
+
 
