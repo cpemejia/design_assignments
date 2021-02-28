@@ -6,51 +6,41 @@
 ;
 
 
-; Replace with your application code
-
 .INCLUDE "M328pbDEF.INC"
 
-LDI R19, 40
+.cseg
+.ORG 0x00
 
-
-CBI DDRC, 3  ; set PC3 as input
+LDI R16, HIGH(RAMEND) 
+OUT SPH, R16
+LDI R16, LOW(RAMEND) 
+OUT SPL, R16
 SBI PORTC, 3 ; enable pull up
-SBI DDRB, 2  ; set PB2 as output
-
+SBI DDRB, 3 ; set PB3 output
+;SBI DDRB, 2  ; set PB2 as output
 loop:
-SBIS PINC, 3 ; skip next if set
-jmp skip
+SBIS PINC, 3
+RJMP pressed
 
-SBI PORTB, 2 ; set PB2 as output
-forty:
-CALL delay
-dec R19
-brne forty
-CBI PORTB, 2
-jmp loop
+CBI PORTB, 3 ; turn on portB led
+LDI R20, 15  ; delay 15x
+CALL delay   ; call delay subroutine
+SBI PORTB, 3 ; turn off portB led
+LDI R20, 5   ; delay 5x
+CALL delay   ; call delay subroutine
 
-skip:
-jmp loop
+RJMP loop    ; endless loop
+
+pressed:
+SBI PORTB, 3 ; led pb3 off
+SBI DDRB, 2  ; set PB2 as output
+CBI PORTB, 2 ; led pb2 on
+LDI R20, 40  ; 2s delay
+CALL delay   
+SBI PORTB, 2 ; led pb2 off
 
 
-delay:       ; delay for a 0.05s delay
-LDI R16, 3   ; load immediate 3 to R16
-L1:          ; label 1
-LDI R17, 105 ; load immediate 105 into R17
-L2:
-LDI R18, 255 ; load immediate 255, into R18
-L3:
-NOP          ; NOP for more delay
-NOP
-NOP
-NOP
-NOP
-NOP
-NOP
-DEC R18
-BRNE L3
-DEC R17
-BRNE L2
-DEC R16
-BRNE L1
-ret
+SBIS PINC, 3
+RJMP pressed
+
+RJMP loop
