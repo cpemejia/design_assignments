@@ -27,12 +27,12 @@ int main (void)
 		
 		if (!(PINC & (1<<PINC3)))    
 		{
-			PORTB &= ~(1<<PB3); // output PB3 off
-			PORTB &= ~(1<<2); // set PORTB.2 for output
+   			PORTB |= (1<<PB3); // output PB3 off
+			DDRB |= (1<<PB2);		// set PB2 output
+			PORTB &= ~(1<<PB2); // output PB2 on
 			_delay_ms(1750);  // delay of 2s
 			PORTB |= (1<<2);  // PB2 off
-			PORTB |= (1<<PB3);		// PB3 output on 
-	   }
+	        }
 	}
 	return 1;
 }
