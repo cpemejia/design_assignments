@@ -18,10 +18,12 @@ int main (void)
 	PORTC |= (1 << 3);
 	
 	while(1){
-		PORTB |= (1<<PB3);  // output PB3 on
+		PORTB &= ~(1<<PB3); // output PB3 on
 		_delay_ms(750);     // delay of 0.75s
-		PORTB &= ~(1<<PB3); // output PB3 off
+		PORTB |= (1<<PB3); // output PB3 off
 		_delay_ms(250);     // delay of 0.25s
+		
+		
 		
 		if (!(PINC & (1<<PINC3)))    
 		{
