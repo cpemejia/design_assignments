@@ -6,7 +6,7 @@
  */ 
 
 
-#define F_CPU 16000000UL								// 16M w/ 9600 baud rate
+#define F_CPU 16000000UL				// 16M w/ 9600 baud rate
 #define BAUD 9600
 #define BAUD_PRESCALE (((F_CPU / (BAUD * 16UL))) - 1)
 
@@ -31,15 +31,14 @@ float duty_cycle;
 
 void usart_putc (char send)
 {
-	// Do nothing for a bit if there is already
-	// data waiting in the hardware to be sent
+	// send data
 	while ((UCSR0A & (1 << UDRE0)) == 0) {};
 	UDR0 = send;
 }
 
 void usart_puts (const char *send)
 {
-	// Cycle through each character individually
+	// send each character in string
 	while (*send) {
 		usart_putc(*send++);
 	}
@@ -47,7 +46,7 @@ void usart_puts (const char *send)
 
 void usart_ok()
 {
-	usart_puts("OK\r\n");
+	usart_puts("OK\r\n"); // OK confirm
 }
 
 void copy_command ()
@@ -62,14 +61,11 @@ unsigned long parse_assignment ()
 {
 	char *pch;
 	char cmdValue[16];
-	// Find the position the equals sign is
-	// in the string, keep a pointer to it
+	// search for equal sign
 	pch = strchr(in_cmd, '=');
-	// Copy everything after that point into
-	// the buffer variable
+	// when found copy the following chars
 	strcpy(cmdValue, pch+1);
-	// Now turn this value into an integer and
-	// return it to the caller.
+	// convert to int and return 
 	return atoi(cmdValue);
 }
 
@@ -269,6 +265,4 @@ ISR (TIMER3_CAPT_vect)
 	PORTB |= (1<<PB3);				// PB3 off on Capture
 	TCNT3 = 0;
 }
-
-
 
